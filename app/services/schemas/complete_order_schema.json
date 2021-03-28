@@ -1,0 +1,21 @@
+{
+  "title": "Root",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "courier_id",
+    "order_id"
+  ],
+  "properties": {
+    "courier_id": {
+      "title": "Courier_id",
+      "type": "integer",
+      "minimum": 0
+    },
+    "order_id": {
+      "title": "Order_id",
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

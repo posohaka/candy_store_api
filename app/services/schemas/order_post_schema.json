@@ -1,0 +1,37 @@
+{
+  "title": "Root",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "order_id",
+    "weight",
+    "region",
+    "delivery_hours"
+  ],
+  "properties": {
+    "order_id": {
+      "title": "Order_id",
+      "type": "integer",
+      "minimum": 0
+    },
+    "weight": {
+      "title": "Weight",
+      "type": "number",
+      "minimum": 0.01,
+      "maximum": 50
+    },
+    "region": {
+      "title": "Region",
+      "type": "integer",
+      "minimum": 0
+    },
+    "delivery_hours": {
+      "title": "Delivery_hours",
+      "type": "array",
+      "items": {
+        "title": "Items",
+        "type": "string"
+      }
+    }
+  }
+}

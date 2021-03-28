@@ -1,0 +1,33 @@
+{
+  "title": "Root",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "courier_type": {
+      "title": "Courier_type",
+      "type": "string",
+      "enum": [
+        "foot",
+        "bike",
+        "car"
+      ]
+    },
+    "regions": {
+      "title": "Regions",
+      "type": "array",
+      "items": {
+        "title": "Items",
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "working_hours": {
+      "title": "Working_hours",
+      "type": "array",
+      "items": {
+        "title": "Items",
+        "type": "string"
+      }
+    }
+  }
+}
