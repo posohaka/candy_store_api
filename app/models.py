@@ -26,16 +26,27 @@ class Courier(db.Model):
         return f'<Courier {self.id}>'
 
 
+class Delivery(db.Model):
+    __tablename__ = 'deliveries'
+    id = db.Column(db.Integer, primary_key=True)
+    orders = db.relationship('Order', backref='deliveries', lazy=True)
+
+    def __repr__(self) -> str:
+        return f'<Delivery {self.id}>'
+
+
 class Order(db.Model):
     __tablename__ = 'orders'
     id = db.Column(db.Integer, primary_key=True)
-    weight = db.Column(db.Integer)
-    region = db.Column(db.Integer)
+    weight = db.Column(db.Float, default=None)
+    region = db.Column(db.Integer, default=None)
     delivery_hours = db.Column(db.ARRAY(db.String(30)))
     courier_id = db.Column(db.Integer, db.ForeignKey('couriers.id'))
     start_date = db.Column(db.DateTime, default=None)
     finish_date = db.Column(db.DateTime, default=None)
     delivery_time = db.Column(db.Float, default=None)
+    delivery_id = db.Column(db.Integer, db.ForeignKey('deliveries.id'))
+    delivery = db.relationship('Delivery')
 
     def __repr__(self) -> str:
         return f'<Order {self.id}>'

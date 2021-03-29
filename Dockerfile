@@ -11,5 +11,3 @@ COPY requirements.txt /app/src/
 RUN pip install -r /app/src/requirements.txt
 
 COPY ./ /app/src
-
-CMD ["python", "main.py"]

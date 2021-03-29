@@ -1,9 +1,9 @@
-from app.models import Courier, Order, db
-
 import numpy as nm
 
+from app.models import Courier, Order, db
+
 courier_types = {
-    'foot': 5,
+    'foot': 10,
     'bike': 15,
     'car': 50
 }
@@ -93,13 +93,13 @@ def get_courier_rating(courier: Courier) -> float:
             delivery_times_by_region[order.region] = [order.delivery_time]
         else:
             delivery_times_by_region[order.region].append(order.delivery_time)
-    for region in delivery_times_by_region:
-        times_by_regions.append(nm.mean(delivery_times_by_region[region]))
+    for times in delivery_times_by_region.values():
+        times_by_regions.append(nm.mean(times))
     time = float('inf')
     if times_by_regions:
         time = min(times_by_regions)
 
-    return calculate_rating(time)
+    return round(calculate_rating(time), 2)
 
 
 def get_earnings(courier: Courier) -> int:

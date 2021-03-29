@@ -2,16 +2,15 @@ from flask import Flask
 from flask_restful import Api
 
 from app import models
-from app.services.data_validator import Validator
 from app.models import db
-from app.resources.courier import Courier, Couriers
-from app.resources.order import Order, AssignOrders, CompleteOrder, Orders
+from app.resources.courier import Couriers
+from app.resources.order import AssignOrders, CompleteOrder, Orders
+from app.services.data_validator import Validator
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = models.get_db_url()
 app.app_context().push()
 db.init_app(app)
-db.create_all()
 api = Api(app)
 
 validator = Validator()

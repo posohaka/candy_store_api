@@ -2,9 +2,9 @@ import flask
 from flask import request
 from flask_restful import Resource, fields, marshal
 
-from app.services.data_validator import Validator
-from app.models import Courier, db, Order
+from app.models import Courier, Order, db
 from app.services import util
+from app.services.data_validator import Validator
 from app.services.util import Object
 
 courier_fields = {
@@ -126,6 +126,7 @@ class Couriers(Resource):
             if order.weight > weight \
                     or order.region not in courier.regions \
                     or not util.is_courier_has_time_for_order(courier, order):
+                order.delivery = None
                 order.start_date = None
                 order.courier_id = None
 

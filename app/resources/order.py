@@ -4,7 +4,7 @@ import flask
 from flask import request
 from flask_restful import Resource, marshal, fields
 
-from app.models import Order, db, Courier
+from app.models import Order, Courier, Delivery, db
 from app.services import util
 from app.services.util import Object
 
@@ -52,7 +52,7 @@ class Orders(Resource):
         for data in json_data['data']:
             order = Order(
                 id=data['order_id'],
-                weight=data['weight'],
+                weight=round(data['weight'], 2),
                 region=data['region'],
                 delivery_hours=data['delivery_hours']
             )
@@ -73,6 +73,7 @@ class AssignOrders(Resource):
         validator : Validator
             validate the json-body
     """
+
     def __init__(self, validator) -> None:
         super().__init__()
         self.validator = validator
@@ -105,20 +106,25 @@ class AssignOrders(Resource):
 
         have_new_orders = False
 
+        delivery = Delivery()
         for order in orders:
+            start_date = datetime.datetime.now()
             if util.is_courier_has_time_for_order(courier, order):
                 order.courier_id = courier.id
-                order.start_date = datetime.datetime.now()
+                order.start_date = start_date
                 have_new_orders = True
+                order.delivery = delivery
 
         if have_new_orders:
             courier.count_delivery += 1
+            db.session.add(delivery)
 
         db.session.commit()
         result = Object()
         result.orders = db.session \
             .query(Order) \
             .filter(Order.start_date.isnot(None),
+                    Order.finish_date.is_(None),
                     Order.courier_id == courier.id) \
             .all()
         return marshal(result, order_list_fields), 200
@@ -158,8 +164,20 @@ class CompleteOrder(Resource):
         if not order:
             return flask.Response(status=400)
         if order.finish_date is None:
+            last_completed_order = db.session \
+                .query(Order) \
+                .filter(Order.courier_id == courier.id,
+                        Order.delivery_id == order.delivery_id,
+                        Order.finish_date.isnot(None)) \
+                .order_by(Order.finish_date.desc()) \
+                .first()
+
+            start_date = order.start_date
+            if last_completed_order:
+                start_date = last_completed_order.finish_date
+
             order.finish_date = datetime.datetime.now()
-            delivery_time = order.finish_date - order.start_date
+            delivery_time = order.finish_date - start_date
             order.delivery_time = delivery_time.total_seconds()
 
         db.session.commit()

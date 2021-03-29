@@ -21,6 +21,7 @@ services:
 
   web:
     build: .
+    command: bash -c "alembic upgrade head && python main.py"
     ports:
       - "8080:8080"
     restart: always
@@ -31,6 +32,8 @@ services:
         condition: service_healthy
     links:
       - db
+    volumes:
+      - ./alembic/versions:/app/src/alembic/versions
 
   adminer:
     image: adminer
